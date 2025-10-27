@@ -1,0 +1,8 @@
+{
+    "files": [
+        "MainWindow.py",
+        "main.py",
+        "settings_manager.py",
+        "themes.py"
+    ]
+}
