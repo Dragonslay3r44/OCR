@@ -31,8 +31,8 @@ class Ui_Form(object):
         self.image_label = QLabel(Form)
         self.image_label.setObjectName(u"image_label")
         self.image_label.setMinimumSize(QSize(400, 0))
-        self.image_label.setFrameShape(QFrame.Box)
-        self.image_label.setAlignment(Qt.AlignCenter)
+        self.image_label.setFrameShape(QFrame.Shape.Box)
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.horizontalLayout.addWidget(self.image_label)
 
@@ -59,6 +59,17 @@ class Ui_Form(object):
         self.text_tess.setReadOnly(True)
 
         self.ocr_layout.addWidget(self.text_tess)
+
+        self.label_latex = QLabel(Form)
+        self.label_latex.setObjectName(u"label_latex")
+
+        self.ocr_layout.addWidget(self.label_latex)
+
+        self.text_latex = QTextEdit(Form)
+        self.text_latex.setObjectName(u"text_latex")
+        self.text_latex.setReadOnly(True)
+
+        self.ocr_layout.addWidget(self.text_latex)
 
 
         self.horizontalLayout.addLayout(self.ocr_layout)
@@ -87,6 +98,7 @@ class Ui_Form(object):
         self.image_label.setText(QCoreApplication.translate("Form", u"\u0418\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435 \u043f\u043e\u044f\u0432\u0438\u0442\u0441\u044f \u0437\u0434\u0435\u0441\u044c", None))
         self.label_paddle.setText(QCoreApplication.translate("Form", u"PaddleOCR:", None))
         self.label_tess.setText(QCoreApplication.translate("Form", u"Tesseract OCR:", None))
+        self.label_latex.setText(QCoreApplication.translate("Form", u"LaTeX OCR (Pix2Tex):", None))
         self.button_load.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435", None))
         self.button_theme.setText(QCoreApplication.translate("Form", u"\u0421\u043c\u0435\u043d\u0438\u0442\u044c \u0442\u0435\u043c\u0443", None))
     # retranslateUi

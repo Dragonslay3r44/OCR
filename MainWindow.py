@@ -1,84 +1,99 @@
-from PySide6.QtWidgets import QMainWindow, QPushButton, QTextEdit, QLabel, QFileDialog, QWidget, QMessageBox
-from PySide6.QtGui import QPixmap, Qt, QIcon
-from PySide6.QtCore import Slot, QDir, QSettings, QCoreApplication
-import resources_rc
+from PySide6.QtWidgets import QMainWindow, QWidget, QFileDialog, QMessageBox
+from PySide6.QtGui import QPixmap, QIcon
+from PySide6.QtCore import Qt, QSettings, QCoreApplication, QDir, Slot
 from ui_main import Ui_Form
 from paddleocr import PaddleOCR
-import cv2
 import pytesseract
-from pathlib import Path
+from pix2tex.cli import LatexOCR
 from PIL import Image
+from pathlib import Path
+import cv2
 import time
 import sys
+import os
+from themes import LIGHT_THEME, DARK_THEME
 
-from themes import LIGHT_THEME, DARK_THEME # Импорт тем
+# Чтобы избежать конфликта OpenMP
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.init_Ui()
-        self.init_OCR()
-
-        self.settings = QSettings() # Менеджер настроек
-
-        self.current_theme = self.settings.value("UI/theme", "light")  # По умолчанию
-        self.apply_theme(self.current_theme)
-
-    def init_Ui(self):
-        # Настройка свойств главного окна
-        app_name = QCoreApplication.applicationName()
-        app_version = QCoreApplication.applicationVersion()
-        self.setWindowTitle(f"{app_name} v{app_version}")
-
-        self.resize(1000, 600)
-        self.setWindowIcon(QIcon(":/icons/appicon.png")) # Иконка
-
-        # Создаём центральный виджет и настраиваем UI через сгенерированный класс
         self.ui = Ui_Form()
         self.central_widget = QWidget()
         self.ui.setupUi(self.central_widget)
         self.setCentralWidget(self.central_widget)
 
-         # Получаем виджеты (предполагаем, что они есть)
-        self.button_load = self.ui.button_load
-        self.button_theme = self.ui.button_theme
-        self.image_label = self.ui.image_label
-        self.text_paddle = self.ui.text_paddle # Paddle
-        self.text_tess = self.ui.text_tess # Tesseract
+        self.init_Theme()
+        self.init_Ocr()
+        self.init_Ui()
 
-        # Делаем текстовые поля только для чтения
-        self.text_paddle.setReadOnly(True)
-        self.text_tess.setReadOnly(True)
-
-        # Привязываем кнопку
-        self.button_load.clicked.connect(self.load_image)
-        self.button_theme.clicked.connect(self.toggle_theme)
-
-        # Настройка QLabel для изображения
-        self.image_label.setAlignment(Qt.AlignCenter)
-        self.image_label.setText("Изображение появится здесь")
-
-    def init_OCR(self):
-        # Инициализация PaddleOCR и Tesseract
-        self.ocr = PaddleOCR(lang='en', use_angle_cls=True)
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    # ================= Theme =================
+    def init_Theme(self):
+        self.settings = QSettings()
+        self.current_theme = self.settings.value("UI/theme", "light")
+        self.apply_theme(self.current_theme)
 
     def apply_theme(self, theme: str):
         self.setStyleSheet(DARK_THEME if theme == "dark" else LIGHT_THEME)
-        # ПОСМОТРЕТЬ (DARK_THEME, LIGHT_THEME)[theme == "dark"]
 
     def toggle_theme(self):
         self.current_theme = "dark" if self.current_theme == "light" else "light"
         self.apply_theme(self.current_theme)
-        self.settings.setValue("UI/theme", self.current_theme) # Сохраняем тему
+        self.settings.setValue("UI/theme", self.current_theme)
 
+    # ================= UI =================
+    def init_Ui(self):
+        # Только чтение текстовых полей
+        self.ui.text_paddle.setReadOnly(True)
+        self.ui.text_tess.setReadOnly(True)
+        self.ui.text_latex.setReadOnly(True)
+
+        # Привязка кнопок
+        self.ui.button_load.clicked.connect(self.load_image)
+        self.ui.button_theme.clicked.connect(self.toggle_theme)
+
+        # QLabel для изображения
+        self.ui.image_label.setAlignment(Qt.AlignCenter)
+        self.ui.image_label.setText("Изображение появится здесь")
+
+        # Настройка окна
+        app_name = QCoreApplication.applicationName()
+        app_version = QCoreApplication.applicationVersion()
+        self.setWindowTitle(f"{app_name} v{app_version}")
+        self.resize(1000, 600)
+        self.setWindowIcon(QIcon(":/icons/appicon.png"))
+
+    # ================= OCR =================
+    def init_Ocr(self):
+        self.paddle_ocr = PaddleOCR(lang='en', use_angle_cls=True)
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        self.latex_ocr_model = LatexOCR()
+
+    def _parse_paddle_result(self, result) -> str:
+        if not result:
+            return "[Нет распознанного текста]"
+        lines = []
+        for line in result:
+            lines.append(" ".join(word_info[1][0] for word_info in line))
+        return "\n".join(lines)
+
+    def _measure_ocr(self, func, *args, **kwargs):
+        """Унифицированный замер времени OCR с обработкой исключений"""
+        start = time.perf_counter()
+        try:
+            result = func(*args, **kwargs)
+        except Exception as e:
+            return f"[Ошибка OCR: {e}]", 0.0
+        elapsed = time.perf_counter() - start
+        return result, elapsed
+
+    # ================= Load Image =================
     @Slot()
     def load_image(self):
-        # Объект настроек (использует OrganizationName и ApplicationName)
         settings = QSettings()
-
-        # Последняя используемая папка или домашняя
-        last_dir = settings.value("last_directory", QDir.homePath())
+        last_dir = settings.value("last_directory", str(Path.home() / "Pictures"))
 
         file_name, _ = QFileDialog.getOpenFileName(
             self,
@@ -90,69 +105,55 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Отмена", "Файл не выбран.")
             return
 
-        # Сохраняем папку файла как последнюю
-        current_dir = str(Path(file_name).parent)
-        settings.setValue("last_directory", current_dir)
+        settings.setValue("last_directory", str(Path(file_name).parent))
 
-        # Загружаем изображение через OpenCV
         img_cv = cv2.imread(file_name)
         if img_cv is None or img_cv.size == 0:
-            self.text_paddle.setPlainText("[PaddleOCR: не смог отработать - файл не загружен]")
-            self.text_tess.setPlainText("[Tesseract: не смог отработать - файл не загружен]")
-            self.image_label.setText("Неверный файл изображения")
+            self.ui.text_paddle.setPlainText("[PaddleOCR: файл не загружен]")
+            self.ui.text_tess.setPlainText("[Tesseract: файл не загружен]")
+            self.ui.text_latex.setPlainText("[LaTeX OCR: файл не загружен]")
+            self.ui.image_label.setText("Неверный файл изображения")
             return
 
         try:
             img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
         except Exception:
-            self.text_paddle.setPlainText("[Ошибка: неизвестный формат изображения]")
-            self.text_tess.setPlainText("[Ошибка: неизвестный формат изображения]")
-            self.image_label.setText("Ошибка формата")
+            self.ui.text_paddle.setPlainText("[Ошибка формата изображения]")
+            self.ui.text_tess.setPlainText("[Ошибка формата изображения]")
+            self.ui.text_latex.setPlainText("[Ошибка формата изображения]")
+            self.ui.image_label.setText("Ошибка формата")
             return
 
         # PaddleOCR
-        # Начало измерения времени
-        start_paddle = time.perf_counter()
-        result = self.ocr.ocr(img_rgb)
-        # Конец замера времени
-        paddle_time = time.perf_counter() - start_paddle
-
-        paddle_text = ""
-        if result and result[0]:
-            for line in result:
-                for word_info in line:
-                    paddle_text += word_info[1][0] + " "
-                paddle_text += "\n"
-        self.text_paddle.setPlainText(paddle_text.strip())
-        # Вывод времени в консоль
+        paddle_result, paddle_time = self._measure_ocr(self.paddle_ocr.ocr, img_rgb)
+        self.ui.text_paddle.setPlainText(self._parse_paddle_result(paddle_result))
         print(f"PaddleOCR: {paddle_time:.3f} sec")
-        sys.stdout.flush()
 
         # Tesseract OCR
         pil_img = Image.fromarray(img_rgb)
-        # Начало замера времени
-        start_tess = time.perf_counter()
-        try:
-            tess_text = pytesseract.image_to_string(pil_img, lang='eng')
-        except Exception as e:
-            tess_text = f"[Tesseract error: {e}]"
-        # Конец замера времени
-        tess_time = time.perf_counter() - start_tess
-
-        self.text_tess.setPlainText(tess_text.strip())
-        # Вывод времени в консоль
+        tess_text, tess_time = self._measure_ocr(pytesseract.image_to_string, pil_img, lang='eng')
+        self.ui.text_tess.setPlainText(tess_text.strip())
         print(f"Tesseract: {tess_time:.3f} sec")
-        sys.stdout.flush()
+
+        # LaTeX OCR
+        try:
+            img_pil = Image.open(file_name)
+            latex_code, latex_time = self._measure_ocr(self.latex_ocr_model, img_pil)
+            self.ui.text_latex.setPlainText(latex_code.strip())
+            print(f"LaTeX OCR: {latex_time:.3f} sec")
+        except Exception as e:
+            self.ui.text_latex.setPlainText(f"[LaTeX OCR error: {e}]")
 
         # Отображаем изображение
         pixmap = QPixmap(file_name)
         if pixmap.isNull():
-            self.image_label.setText("Не удалось отобразить изображение") # Обработка ошибок
+            self.ui.image_label.setText("Не удалось отобразить изображение")
         else:
-            self.image_label.setPixmap(
+            self.ui.image_label.setPixmap(
                 pixmap.scaled(
-                    self.image_label.size(),
+                    self.ui.image_label.size(),
                     Qt.KeepAspectRatio,
                     Qt.SmoothTransformation
                 )
             )
+

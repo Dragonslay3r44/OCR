@@ -25,13 +25,13 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Box</enum>
+        <enum>QFrame::Shape::Box</enum>
        </property>
        <property name="text">
         <string>Изображение появится здесь</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <set>Qt::AlignmentFlag::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -60,6 +60,20 @@
        </item>
        <item>
         <widget class="QTextEdit" name="text_tess">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_latex">
+         <property name="text">
+          <string>LaTeX OCR (Pix2Tex):</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="text_latex">
          <property name="readOnly">
           <bool>true</bool>
          </property>
