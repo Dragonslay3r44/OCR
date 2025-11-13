@@ -9,9 +9,13 @@ from PIL import Image
 from pathlib import Path
 import cv2
 import time
-import sys
 import os
 from themes import LIGHT_THEME, DARK_THEME
+
+# Импорт окон настроек OCR (исправлено)
+from tesseract_window import TesseractSettingsWindow
+from paddleocr_window import PaddleOCRSettingsWindow
+from latexocr_window import LatexOCRSettingsWindow
 
 # Чтобы избежать конфликта OpenMP
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -29,7 +33,10 @@ class MainWindow(QMainWindow):
         self.init_Ocr()
         self.init_Ui()
 
-    # ================= Theme =================
+        self.tess_window = TesseractSettingsWindow()  # Окно Tesseract
+        self.paddle_window = PaddleOCRSettingsWindow()  # Окно PaddleOCR
+        self.latex_window = LatexOCRSettingsWindow()  # Окно LaTeX OCR
+
     def init_Theme(self):
         self.settings = QSettings()
         self.current_theme = self.settings.value("UI/theme", "light")
@@ -43,7 +50,6 @@ class MainWindow(QMainWindow):
         self.apply_theme(self.current_theme)
         self.settings.setValue("UI/theme", self.current_theme)
 
-    # ================= UI =================
     def init_Ui(self):
         # Только чтение текстовых полей
         self.ui.text_paddle.setReadOnly(True)
@@ -53,6 +59,11 @@ class MainWindow(QMainWindow):
         # Привязка кнопок
         self.ui.button_load.clicked.connect(self.load_image)
         self.ui.button_theme.clicked.connect(self.toggle_theme)
+
+        # Привязка кнопок к окнам настроек OCR
+        self.ui.button_tess_settings.clicked.connect(self.show_tesseract_window)
+        self.ui.button_paddle_settings.clicked.connect(self.show_paddle_window)
+        self.ui.button_latex_settings.clicked.connect(self.show_latex_window)
 
         # QLabel для изображения
         self.ui.image_label.setAlignment(Qt.AlignCenter)
@@ -65,7 +76,6 @@ class MainWindow(QMainWindow):
         self.resize(1000, 600)
         self.setWindowIcon(QIcon(":/icons/appicon.png"))
 
-    # ================= OCR =================
     def init_Ocr(self):
         self.paddle_ocr = PaddleOCR(lang='en', use_angle_cls=True)
         pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -89,7 +99,6 @@ class MainWindow(QMainWindow):
         elapsed = time.perf_counter() - start
         return result, elapsed
 
-    # ================= Load Image =================
     @Slot()
     def load_image(self):
         settings = QSettings()
@@ -156,4 +165,15 @@ class MainWindow(QMainWindow):
                     Qt.SmoothTransformation
                 )
             )
+
+    def show_tesseract_window(self):
+        self.tess_window.show()  # Показываем окно Tesseract
+
+    def show_paddle_window(self):
+        self.paddle_window.show()  # Показываем окно PaddleOCR
+
+    def show_latex_window(self):
+        self.latex_window.show()  # Показываем окно LaTeX OCR
+
+
 

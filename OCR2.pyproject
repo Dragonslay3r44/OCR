@@ -1,8 +1,11 @@
 {
     "files": [
         "MainWindow.py",
+        "latexocr_window.py",
         "main.py",
+        "paddleocr_window.py",
         "settings_manager.py",
+        "tesseract_window.py",
         "themes.py"
     ]
 }

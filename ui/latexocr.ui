@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LatexOCRSettingsDialog</class>
+ <widget class="QDialog" name="LatexOCRSettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>LaTeX OCR Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+
+   <item>
+    <widget class="QLabel" name="label_model">
+     <property name="text">
+      <string>Модель Pix2Tex:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="combo_model">
+     <item>
+      <property name="text">
+       <string>default</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>small</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>medium</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPushButton" name="button_load_image">
+     <property name="text">
+      <string>Загрузить изображение и распознать</string>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QTextEdit" name="text_result">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPushButton" name="button_close">
+     <property name="text">
+      <string>Закрыть</string>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

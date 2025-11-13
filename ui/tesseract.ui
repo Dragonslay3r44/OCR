@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TesseractSettingsDialog</class>
+ <widget class="QDialog" name="TesseractSettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>452</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Tesseract OCR Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label_language">
+     <property name="text">
+      <string>Язык:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="edit_language">
+     <property name="text">
+      <string>eng</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_psm">
+     <property name="text">
+      <string>Режим разметки страницы (PSM):</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="combo_psm">
+     <item>
+      <property name="text">
+       <string>Автоматическая сегментация с OSD</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Полная автоматическая сегментация, без OSD</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Предполагается один блок текста</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Разреженный текст, искать как можно больше текста</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_load_image">
+     <property name="text">
+      <string>Загрузить изображение и распознать</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTextEdit" name="text_result">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_close">
+     <property name="text">
+      <string>Закрыть</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

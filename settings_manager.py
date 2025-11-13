@@ -1,3 +1,4 @@
+# settings_manager.py
 from PySide6.QtCore import QSettings, QDir
 
 class SettingsManager:

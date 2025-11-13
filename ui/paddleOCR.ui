@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PaddleOCRSettingsDialog</class>
+ <widget class="QDialog" name="PaddleOCRSettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>350</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PaddleOCR Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+
+   <item>
+    <widget class="QLabel" name="label_lang">
+     <property name="text">
+      <string>Язык распознавания:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="edit_lang">
+     <property name="text">
+      <string>en</string>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QLabel" name="label_angle">
+     <property name="text">
+      <string>Использовать определение угла поворота:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="check_angle">
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPushButton" name="button_load_image">
+     <property name="text">
+      <string>Загрузить изображение и распознать</string>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QTextEdit" name="text_result">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPushButton" name="button_close">
+     <property name="text">
+      <string>Закрыть</string>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

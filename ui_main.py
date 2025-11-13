@@ -31,8 +31,8 @@ class Ui_Form(object):
         self.image_label = QLabel(Form)
         self.image_label.setObjectName(u"image_label")
         self.image_label.setMinimumSize(QSize(400, 0))
-        self.image_label.setFrameShape(QFrame.Shape.Box)
-        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.image_label.setFrameShape(QFrame.Box)
+        self.image_label.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout.addWidget(self.image_label)
 
@@ -87,6 +87,26 @@ class Ui_Form(object):
 
         self.verticalLayout.addWidget(self.button_theme)
 
+        self.settings_buttons_layout = QHBoxLayout()
+        self.settings_buttons_layout.setObjectName(u"settings_buttons_layout")
+        self.button_tess_settings = QPushButton(Form)
+        self.button_tess_settings.setObjectName(u"button_tess_settings")
+
+        self.settings_buttons_layout.addWidget(self.button_tess_settings)
+
+        self.button_paddle_settings = QPushButton(Form)
+        self.button_paddle_settings.setObjectName(u"button_paddle_settings")
+
+        self.settings_buttons_layout.addWidget(self.button_paddle_settings)
+
+        self.button_latex_settings = QPushButton(Form)
+        self.button_latex_settings.setObjectName(u"button_latex_settings")
+
+        self.settings_buttons_layout.addWidget(self.button_latex_settings)
+
+
+        self.verticalLayout.addLayout(self.settings_buttons_layout)
+
 
         self.retranslateUi(Form)
 
@@ -99,7 +119,10 @@ class Ui_Form(object):
         self.label_paddle.setText(QCoreApplication.translate("Form", u"PaddleOCR:", None))
         self.label_tess.setText(QCoreApplication.translate("Form", u"Tesseract OCR:", None))
         self.label_latex.setText(QCoreApplication.translate("Form", u"LaTeX OCR (Pix2Tex):", None))
-        self.button_load.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435", None))
+        self.button_load.setText(QCoreApplication.translate("Form", u"\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435 (\u0412\u0441\u0435 OCR)", None))
         self.button_theme.setText(QCoreApplication.translate("Form", u"\u0421\u043c\u0435\u043d\u0438\u0442\u044c \u0442\u0435\u043c\u0443", None))
+        self.button_tess_settings.setText(QCoreApplication.translate("Form", u"Tesseract Settings", None))
+        self.button_paddle_settings.setText(QCoreApplication.translate("Form", u"PaddleOCR Settings", None))
+        self.button_latex_settings.setText(QCoreApplication.translate("Form", u"LaTeX OCR Settings", None))
     # retranslateUi
 

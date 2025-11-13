@@ -25,13 +25,13 @@
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Shape::Box</enum>
+        <enum>QFrame::Box</enum>
        </property>
        <property name="text">
         <string>Изображение появится здесь</string>
        </property>
        <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -86,7 +86,7 @@
    <item>
     <widget class="QPushButton" name="button_load">
      <property name="text">
-      <string>Загрузить изображение</string>
+      <string>Загрузить изображение (Все OCR)</string>
      </property>
     </widget>
    </item>
@@ -96,6 +96,31 @@
       <string>Сменить тему</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="settings_buttons_layout">
+     <item>
+      <widget class="QPushButton" name="button_tess_settings">
+       <property name="text">
+        <string>Tesseract Settings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_paddle_settings">
+       <property name="text">
+        <string>PaddleOCR Settings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_latex_settings">
+       <property name="text">
+        <string>LaTeX OCR Settings</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
